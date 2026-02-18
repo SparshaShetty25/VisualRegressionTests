@@ -6,23 +6,32 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: node
-    image: node:18-alpine
-    command:
-    - cat
-    tty: true
-    volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
+  # Commented out Node container - using only Playwright
+  # - name: node
+  #   image: node:18-alpine
+  #   command:
+  #   - cat
+  #   tty: true
+  #   volumeMounts:
+  #   - name: docker-sock
+  #     mountPath: /var/run/docker.sock
   - name: playwright
-    image: mcr.microsoft.com/playwright:v1.45.0-focal
+    image: mcr.microsoft.com/playwright:v1.58.2-focal
     command:
     - cat
     tty: true
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "1"
+      limits:
+        memory: "4Gi"
+        cpu: "2"
+  # Commented out Docker volumes - not needed for Chrome-only setup
+  # volumes:
+  # - name: docker-sock
+  #   hostPath:
+  #     path: /var/run/docker.sock
             """
         }
     }
@@ -75,10 +84,13 @@ spec:
     stages {
         stage('Setup') {
             steps {
-                container('node') {
+                container('playwright') {
                     script {
-                        // Install dependencies
-                        sh 'npm ci'
+                        // Install dependencies and Chrome browser
+                        sh '''
+                            npm ci
+                            npx playwright install --with-deps chromium
+                        '''
                         echo "Environment: ${env.TLD}"
                         echo "Test Suite: ${params.TEST_SUITE}"
                         echo "Mobile View: ${params.MOBILE_VIEW}"
@@ -87,6 +99,8 @@ spec:
             }
         }
 
+        // Commented out separate browser install stage - now combined with setup
+        /*
         stage('Install Browsers') {
             steps {
                 container('playwright') {
@@ -96,6 +110,7 @@ spec:
                 }
             }
         }
+        */
 
         stage('Visual Regression Tests') {
             parallel {
