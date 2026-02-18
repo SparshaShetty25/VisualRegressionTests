@@ -4,11 +4,9 @@ Dedicated Playwright-based visual regression testing suite for MPB applications.
 
 ## Overview
 
-This repository provides fast, reliable visual regression testing for:
-- **Toucan** - Customer-facing Re.Commerce website
-- **Flamingo** - Internal admin/backoffice system
+This repository provides fast, reliable visual regression testing currently for Swan:
+
 - **Swan** - Warehouse/inventory management system
-- **Goose** - Identity/authentication service
 
 ## Architecture Benefits
 
