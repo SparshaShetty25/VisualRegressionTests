@@ -23,6 +23,7 @@ const config = {
   get GOOSE_URL() { return `${this.PROTOCOL}://identity.${this.TLD}` }
 };
 
+
 module.exports = defineConfig({
   testDir: './tests',
   timeout: 60000,
@@ -41,12 +42,25 @@ module.exports = defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : config.WORKERS,
 
+
+
   reporter: [
-    ['html'],
-    ['junit', { outputFile: 'test-results/junit.xml' }],
-    ['json', { outputFile: 'test-results/results.json' }],
-    ['allure-playwright', { outputFolder: 'allure-results' }]
-  ],
+      ['html', {
+          outputFolder: 'playwright-report',
+          outputDir: 'test-results',
+          open: !!process.env.CI ? 'never' : 'always'
+      }],
+      ['junit', { outputFile: 'test-results/junit.xml' }],
+      ['json', { outputFile: 'test-results/results.json' }],
+      ['allure-playwright', { outputFolder: 'allure-results' }]
+    ],
+
+  // reporter: [
+  //   ['html'],
+  //   ['junit', { outputFile: 'test-results/junit.xml' }],
+  //   ['json', { outputFile: 'test-results/results.json' }],
+  //   ['allure-playwright', { outputFolder: 'allure-results' }]
+  // ],
 
   use: {
     actionTimeout: 15000,

@@ -42,8 +42,6 @@ spec:
             name: 'TLD',
             choices: [
                 'staging.env.mpb.com',
-                'production.mpb.com',
-                'demo.env.mpb.com'
             ],
             description: 'Target environment'
         )
@@ -105,7 +103,7 @@ spec:
             parallel {
                 stage('Desktop Tests') {
                     when {
-                        not { params.MOBILE_VIEW == true }
+                        not { params.MOBILE_VIEW }
                     }
                     steps {
                         container('playwright') {
@@ -120,8 +118,8 @@ spec:
                 stage('Mobile Tests') {
                     when {
                         anyOf {
-                            params.MOBILE_VIEW == true
-                            params.TEST_SUITE == 'mobile-only'
+                            params.MOBILE_VIEW
+                            expression { params.TEST_SUITE == 'mobile-only' }
                         }
                     }
                     steps {

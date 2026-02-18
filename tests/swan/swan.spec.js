@@ -9,7 +9,7 @@ const { test, expect } = require('../../lib/fixtures');
 test.describe('Swan Visual Regression Tests', () => {
 
     test.describe('Login Pages', () => {
-        test('Swan login page visual @swan', async ({ publicPage }) => {
+        test('Swan login page visual @swan @smoke', async ({ publicPage }) => {
             const { page, tester } = publicPage;
             await tester.navigateToPage(page, '/login');
             await tester.takeScreenshot(page, 'swan-login-page.png');
@@ -18,25 +18,25 @@ test.describe('Swan Visual Regression Tests', () => {
     });
 
     test.describe('Home Page', () => {
-        test('Swan home page visual', async ({ authenticatedPage }) => {
+        test('Swan home page visual @smoke', async ({ authenticatedPage }) => {
             const { page, tester } = authenticatedPage;
             await tester.navigateToPage(page, '/');
             await tester.takeScreenshot(page, 'swan-home-page.png');
         });
 
-        test('Swan receiving page visual', async ({ authenticatedPage }) => {
+        test('Swan receiving page visual @smoke', async ({ authenticatedPage }) => {
             const { page, tester } = authenticatedPage;
             await tester.navigateToPage(page, '/receiving');
             await tester.takeScreenshot(page, 'swan-receiving-page.png');
         });
 
-        test('Swan picking page visual', async ({ authenticatedPage }) => {
+        test('Swan picking page visual @smoke', async ({ authenticatedPage }) => {
             const { page, tester } = authenticatedPage;
             await tester.navigateToPage(page, '/picking');
             await tester.takeScreenshot(page, 'swan-picking-page.png');
         });
 
-        test('Swan lookup page visual', async ({ authenticatedPage }) => {
+        test('Swan lookup page visual @smoke', async ({ authenticatedPage }) => {
             const { page, tester } = authenticatedPage;
             await tester.navigateToPage(page, '/lookup');
             await tester.takeScreenshot(page, 'swan-lookup-page.png');
