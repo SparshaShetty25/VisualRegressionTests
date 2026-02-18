@@ -38,12 +38,10 @@ spec:
     }
 
     parameters {
-        choice(
+        string(
             name: 'TLD',
-            choices: [
-                'staging.env.mpb.com',
-            ],
-            description: 'Target environment'
+            defaultValue: 'staging.env.mpb.com',
+            description: 'Target environment (e.g., staging.env.mpb.com, feature.env.mpb.com, swan.koda-500.env.mpb.com)'
         )
         choice(
             name: 'TEST_SUITE',
