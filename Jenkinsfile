@@ -103,7 +103,9 @@ spec:
             parallel {
                 stage('Desktop Tests') {
                     when {
-                        not { params.MOBILE_VIEW }
+                        not {
+                            expression { params.MOBILE_VIEW == true }
+                        }
                     }
                     steps {
                         container('playwright') {
@@ -118,7 +120,7 @@ spec:
                 stage('Mobile Tests') {
                     when {
                         anyOf {
-                            params.MOBILE_VIEW
+                            expression { params.MOBILE_VIEW == true }
                             expression { params.TEST_SUITE == 'mobile-only' }
                         }
                     }
