@@ -16,7 +16,7 @@ spec:
   #   - name: docker-sock
   #     mountPath: /var/run/docker.sock
   - name: playwright
-    image: mcr.microsoft.com/playwright:v1.58.2-focal
+    image: mcr.microsoft.com/playwright:v1.48.0-jammy
     command:
     - cat
     tty: true
@@ -55,12 +55,12 @@ spec:
         choice(
             name: 'TEST_SUITE',
             choices: [
-                'all',
-                'swan',
-                'toucan',
-                'flamingo',
-                'goose',
-                'mobile-only'
+                'All',
+                'Swan',
+                'Toucan',
+                'Flamingo',
+                'Goose',
+                'Mobile-only'
             ],
             description: 'Test suite to run'
         )
@@ -153,7 +153,7 @@ spec:
     post {
         always {
             // Publish test results
-            publishTestResults testResultsPattern: 'test-results/junit.xml'
+            junit 'test-results/junit.xml'
 
             // Archive test reports
             archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
@@ -216,22 +216,22 @@ def getTestCommand(testSuite, mobile, updateBaselines) {
     // Add test directory based on suite
     def testPath = ''
     switch(testSuite) {
-        case 'swan':
+        case 'Swan':
             testPath = 'tests/swan'
             break
-        case 'toucan':
+        case 'Toucan':
             testPath = 'tests/toucan'
             break
-        case 'flamingo':
+        case 'Flamingo':
             testPath = 'tests/flamingo'
             break
-        case 'goose':
+        case 'Goose':
             testPath = 'tests/goose'
             break
-        case 'mobile-only':
+        case 'Mobile-only':
             testPath = 'tests'
             break
-        case 'all':
+        case 'All':
         default:
             testPath = 'tests'
             break
