@@ -66,7 +66,7 @@ spec:
         )
         string(
             name: 'VISUAL_THRESHOLD',
-            defaultValue: '0.1',
+            defaultValue: '0.2',
             description: 'Visual comparison threshold (0.0-1.0)'
         )
         booleanParam(

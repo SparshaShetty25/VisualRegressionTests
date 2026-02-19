@@ -50,11 +50,20 @@ module.exports = defineConfig({
 
 
 
-  reporter: [
+  reporter: process.env.CI ? [
+      ['junit', { outputFile: 'test-results/junit.xml' }],
+      ['json', { outputFile: 'test-results/results.json' }],
       ['html', {
           outputFolder: 'playwright-report',
           outputDir: 'test-results',
-          open: !!process.env.CI ? 'never' : 'always'
+          open: 'never'
+      }],
+      ['allure-playwright', { outputFolder: 'allure-results' }]
+    ] : [
+      ['html', {
+          outputFolder: 'playwright-report',
+          outputDir: 'test-results',
+          open: 'always'
       }],
       ['junit', { outputFile: 'test-results/junit.xml' }],
       ['json', { outputFile: 'test-results/results.json' }],
@@ -101,7 +110,7 @@ module.exports = defineConfig({
     },
     {
       name: 'Mobile Chrome',
-      use: { ...devices['iPhone SE'], viewport: { width: 375, height: 667 } }
+      use: { ...devices['iPhone SE'], viewport: { width: 375, height: 717 } }
     }
   ]
 });
