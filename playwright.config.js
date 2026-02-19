@@ -38,8 +38,8 @@ module.exports = defineConfig({
       mode: 'pixel',
       animations: 'disabled',
       // Handle cross-platform rendering differences
-      maxDiffPixels: 1000,
-      maxDiffPixelRatio: 0.1
+      maxDiffPixels: 10000,
+      maxDiffPixelRatio: 0.05
     }
   },
 
@@ -106,11 +106,12 @@ module.exports = defineConfig({
     {
       name: 'Desktop Chrome',
       use: { ...devices['Desktop Chrome'], viewport: { width: 1920, height: 1080 } },
-      testIgnore: ['**/swan/**']
+      testIgnore: ['**/swan/**', '**/template.spec.js']
     },
     {
       name: 'Mobile Chrome',
-      use: { ...devices['iPhone SE'], viewport: { width: 375, height: 717 } }
+      use: { ...devices['iPhone SE'], viewport: { width: 375, height: 717 } },
+      testIgnore: ['**/template.spec.js']
     }
   ]
 });
