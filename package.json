@@ -31,11 +31,11 @@
     "regression"
   ],
   "dependencies": {
-    "@playwright/test": "^1.45.0"
+    "@playwright/test": "1.48.0"
   },
   "devDependencies": {
     "allure-commandline": "^2.36.0",
-    "allure-playwright": "^3.4.5",
+    "allure-playwright": "3.0.0",
     "dotenv": "^16.0.0"
   },
   "engines": {
