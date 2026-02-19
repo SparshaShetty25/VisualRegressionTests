@@ -82,37 +82,44 @@ spec:
     }
 
     stages {
-        stage('Setup') {
+        stage('Environment Setup') {
             steps {
                 container('playwright') {
                     script {
-                        // Install dependencies and Chrome browser
-                        sh '''
-                            npm ci
-                            npx playwright install --with-deps chromium
-                        '''
-                        echo "Environment: ${env.TLD}"
+                        echo "Setting up test environment..."
+                        echo "Target Environment: ${env.TLD}"
                         echo "Test Suite: ${params.TEST_SUITE}"
                         echo "Mobile View: ${params.MOBILE_VIEW}"
+                        echo "Update Baselines: ${params.UPDATE_BASELINES}"
+                        echo "Visual Threshold: ${params.VISUAL_THRESHOLD}"
                     }
                 }
             }
         }
 
-        // Commented out separate browser install stage - now combined with setup
-        /*
-        stage('Install Browsers') {
+        stage('Install Dependencies') {
             steps {
                 container('playwright') {
                     script {
+                        echo "Installing npm dependencies..."
+                        sh 'npm ci'
+                    }
+                }
+            }
+        }
+
+        stage('Install Browser') {
+            steps {
+                container('playwright') {
+                    script {
+                        echo "Installing Chromium browser..."
                         sh 'npx playwright install --with-deps chromium'
                     }
                 }
             }
         }
-        */
 
-        stage('Visual Regression Tests') {
+        stage('Run Visual Tests') {
             parallel {
                 stage('Desktop Tests') {
                     when {
@@ -123,6 +130,7 @@ spec:
                     steps {
                         container('playwright') {
                             script {
+                                echo "Running desktop visual regression tests..."
                                 def testCommand = getTestCommand(params.TEST_SUITE, false, params.UPDATE_BASELINES)
                                 sh testCommand
                             }
@@ -134,16 +142,51 @@ spec:
                     when {
                         anyOf {
                             expression { params.MOBILE_VIEW == true }
-                            expression { params.TEST_SUITE == 'mobile-only' }
+                            expression { params.TEST_SUITE == 'Mobile-only' }
                         }
                     }
                     steps {
                         container('playwright') {
                             script {
+                                echo "Running mobile visual regression tests..."
                                 def testCommand = getTestCommand(params.TEST_SUITE, true, params.UPDATE_BASELINES)
                                 sh testCommand
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        stage('Generate Reports') {
+            steps {
+                container('playwright') {
+                    script {
+                        echo "Generating test reports and archiving artifacts..."
+                        // Archive all test results for user access
+                        archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
+
+                        // Publish HTML report for easy viewing
+                        if (fileExists('playwright-report/index.html')) {
+                            publishHTML([
+                                allowMissing: true,
+                                alwaysLinkToLastBuild: true,
+                                keepAll: true,
+                                reportDir: 'playwright-report',
+                                reportFiles: 'index.html',
+                                reportName: 'Visual Test Report'
+                            ])
+                        }
+
+                        // Publish JUnit results if available (no emails, just for Jenkins UI)
+                        if (fileExists('test-results/junit.xml')) {
+                            junit allowEmptyResults: true, testResultsPattern: 'test-results/junit.xml'
+                        }
+
+                        echo "Test results archived and available in build artifacts"
+                        echo "Access reports via: ${env.BUILD_URL}artifact/"
                     }
                 }
             }
