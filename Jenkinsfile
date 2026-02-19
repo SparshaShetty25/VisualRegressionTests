@@ -101,19 +101,11 @@ spec:
             steps {
                 container('playwright') {
                     script {
-                        echo "Installing npm dependencies..."
-                        sh 'npm ci'
-                    }
-                }
-            }
-        }
-
-        stage('Install Browser') {
-            steps {
-                container('playwright') {
-                    script {
-                        echo "Installing Chromium browser..."
-                        sh 'npx playwright install --with-deps chromium'
+                        echo "Installing npm dependencies and Chromium browser..."
+                        sh '''
+                            npm ci
+                            npx playwright install --with-deps chromium
+                        '''
                     }
                 }
             }
@@ -182,7 +174,7 @@ spec:
 
                         // Publish JUnit results if available (no emails, just for Jenkins UI)
                         if (fileExists('test-results/junit.xml')) {
-                            junit allowEmptyResults: true, testResultsPattern: 'test-results/junit.xml'
+                            junit allowEmptyResults: true, testResults: 'test-results/junit.xml'
                         }
 
                         echo "Test results archived and available in build artifacts"
@@ -215,7 +207,7 @@ spec:
 
                 // Publish JUnit results if available (no emails, just for Jenkins UI)
                 if (fileExists('test-results/junit.xml')) {
-                    junit allowEmptyResults: true, testResultsPattern: 'test-results/junit.xml'
+                    junit allowEmptyResults: true, testResults: 'test-results/junit.xml'
                 }
 
                 echo "Test results archived and available in build artifacts"
