@@ -152,45 +152,43 @@ spec:
 
     post {
         always {
-            // Publish test results
-            junit 'test-results/junit.xml'
+            script {
+                // Archive all test results for user access
+                archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
 
-            // Archive test reports
-            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
-            archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+                // Publish HTML report for easy viewing
+                if (fileExists('playwright-report/index.html')) {
+                    publishHTML([
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'playwright-report',
+                        reportFiles: 'index.html',
+                        reportName: 'Visual Test Report'
+                    ])
+                }
 
-            // Publish HTML report
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: 'playwright-report',
-                reportFiles: 'index.html',
-                reportName: 'Visual Regression Report'
-            ])
+                // Publish JUnit results if available (no emails, just for Jenkins UI)
+                if (fileExists('test-results/junit.xml')) {
+                    junit allowEmptyResults: true, testResultsPattern: 'test-results/junit.xml'
+                }
+
+                echo "📊 Test results archived and available in build artifacts"
+                echo "📁 Access reports via: ${env.BUILD_URL}artifact/"
+            }
         }
 
         failure {
-            // Notify on failures
-            emailext (
-                subject: "Visual Regression Tests Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER}",
-                body: """
-Visual regression tests failed for ${env.TLD}
-
-Build: ${env.BUILD_URL}
-Report: ${env.BUILD_URL}Visual_Regression_Report/
-
-Test Suite: ${params.TEST_SUITE}
-Environment: ${env.TLD}
-                """,
-                to: "${env.CHANGE_AUTHOR_EMAIL ?: 'team@mpb.com'}"
-            )
+            echo "❌ Visual regression tests failed. Check the archived reports for details."
         }
 
         success {
             script {
+                echo "✅ Visual regression tests completed successfully!"
                 if (params.UPDATE_BASELINES) {
-                    echo "Visual baselines updated successfully"
+                    echo "📸 Visual baselines updated successfully"
                 }
             }
         }
