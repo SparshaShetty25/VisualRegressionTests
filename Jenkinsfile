@@ -175,20 +175,20 @@ spec:
                     junit allowEmptyResults: true, testResultsPattern: 'test-results/junit.xml'
                 }
 
-                echo "📊 Test results archived and available in build artifacts"
-                echo "📁 Access reports via: ${env.BUILD_URL}artifact/"
+                echo "Test results archived and available in build artifacts"
+                echo "Access reports via: ${env.BUILD_URL}artifact/"
             }
         }
 
         failure {
-            echo "❌ Visual regression tests failed. Check the archived reports for details."
+            echo " Visual regression tests failed. Check the archived reports for details."
         }
 
         success {
             script {
-                echo "✅ Visual regression tests completed successfully!"
+                echo "Visual regression tests completed successfully!"
                 if (params.UPDATE_BASELINES) {
-                    echo "📸 Visual baselines updated successfully"
+                    echo "Visual baselines updated successfully"
                 }
             }
         }

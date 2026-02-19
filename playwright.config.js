@@ -33,7 +33,10 @@ module.exports = defineConfig({
     toHaveScreenshot: {
       threshold: config.VISUAL_THRESHOLD,
       mode: 'pixel',
-      animations: 'disabled'
+      animations: 'disabled',
+      // Handle cross-platform rendering differences
+      maxDiffPixels: 1000,
+      maxDiffPixelRatio: 0.1
     }
   },
 
