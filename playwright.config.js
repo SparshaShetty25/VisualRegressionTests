@@ -9,7 +9,7 @@ require('dotenv').config();
  */
 
 const config = {
-  TLD: process.env.TLD || 'swan.koda-500.env.mpb.com',
+  TLD: process.env.TLD || 'staging.env.mpb.com',
   PROTOCOL: process.env.PROTOCOL || 'https',
   MOBILE_VIEW: process.env.MOBILE_VIEW === 'true',
   HEADLESS: process.env.HEADLESS !== 'false',
@@ -23,6 +23,9 @@ const config = {
   get GOOSE_URL() { return `${this.PROTOCOL}://identity.${this.TLD}` }
 };
 
+
+// Set TEST_CONFIG environment variable for the base-tester
+process.env.TEST_CONFIG = JSON.stringify(config);
 
 module.exports = defineConfig({
   testDir: './tests',
