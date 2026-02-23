@@ -1,6 +1,11 @@
+library 'mpb-toolbox'
+
+def buildURL = env.BUILD_URL
+
 pipeline {
     agent {
         kubernetes {
+            defaultContainer 'playwright'
             yaml """
 apiVersion: v1
 kind: Pod
@@ -38,7 +43,7 @@ spec:
 
     environment {
         // Default environment settings
-        TLD = "${params.TLD ?: 'staging.env.mpb.com'}"
+        TLD = "${params.TIER}.env.mpb.com"
         PROTOCOL = "${params.PROTOCOL ?: 'https'}"
         HEADLESS = 'true'
         CI = 'true'
@@ -48,9 +53,9 @@ spec:
 
     parameters {
         string(
-            name: 'TLD',
-            defaultValue: 'staging.env.mpb.com',
-            description: 'Target environment (e.g., staging.env.mpb.com, feature.env.mpb.com, swan.koda-500.env.mpb.com)'
+            name: 'TIER',
+            defaultValue: 'staging',
+            description: 'The tier where the tests will run (staging, checkout, etc.)'
         )
         choice(
             name: 'TEST_SUITE',
@@ -124,7 +129,9 @@ spec:
                             script {
                                 echo "Running desktop visual regression tests..."
                                 def testCommand = getTestCommand(params.TEST_SUITE, false, params.UPDATE_BASELINES)
-                                sh testCommand
+                                catchError(buildResult: "SUCCESS", stageResult: "SUCCESS") {
+                                    sh testCommand + " | tee desktop-visual.log"
+                                }
                             }
                         }
                     }
@@ -142,7 +149,9 @@ spec:
                             script {
                                 echo "Running mobile visual regression tests..."
                                 def testCommand = getTestCommand(params.TEST_SUITE, true, params.UPDATE_BASELINES)
-                                sh testCommand
+                                catchError(buildResult: "SUCCESS", stageResult: "SUCCESS") {
+                                    sh testCommand + " | tee mobile-visual.log"
+                                }
                             }
                         }
                     }
@@ -188,6 +197,8 @@ spec:
     post {
         always {
             script {
+                // Archive log files (matching TA pattern)
+                archiveArtifacts artifacts: '*.log', allowEmptyArchive: true
                 // Archive all test results for user access
                 archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
