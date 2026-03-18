@@ -177,6 +177,7 @@ spec:
                 // Archive all test results for user access
                 archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
+                archiveArtifacts artifacts: 'tests/**/*-snapshots/**/*', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
 
                 // Publish HTML report for easy viewing
