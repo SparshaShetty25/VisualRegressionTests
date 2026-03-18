@@ -96,7 +96,14 @@ module.exports = defineConfig({
     // Optimized for headed mode debugging
     launchOptions: {
       slowMo: process.env.SLOW_MO ? parseInt(process.env.SLOW_MO) : 0,
-      devtools: process.env.DEVTOOLS === 'true'
+      devtools: process.env.DEVTOOLS === 'true',
+      args: [
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+      ]
     }
   },
 
