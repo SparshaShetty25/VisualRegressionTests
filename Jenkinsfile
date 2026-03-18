@@ -162,31 +162,7 @@ spec:
             steps {
                 container('playwright') {
                     script {
-                        echo "Generating test reports and archiving artifacts..."
-                        // Archive all test results for user access
-                        archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
-                        archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
-                        archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
-
-                        // Publish HTML report for easy viewing
-                        if (fileExists('playwright-report/index.html')) {
-                            publishHTML([
-                                allowMissing: true,
-                                alwaysLinkToLastBuild: true,
-                                keepAll: true,
-                                reportDir: 'playwright-report',
-                                reportFiles: 'index.html',
-                                reportName: 'Visual Test Report'
-                            ])
-                        }
-
-                        // Publish JUnit results if available (no emails, just for Jenkins UI)
-                        if (fileExists('test-results/junit.xml')) {
-                            junit allowEmptyResults: true, testResults: 'test-results/junit.xml'
-                        }
-
-                        echo "Test results archived and available in build artifacts"
-                        echo "Access reports via: ${env.BUILD_URL}artifact/"
+                        echo "Test execution completed. Reports will be generated in post-actions."
                     }
                 }
             }
