@@ -96,14 +96,7 @@ module.exports = defineConfig({
     // Optimized for headed mode debugging
     launchOptions: {
       slowMo: process.env.SLOW_MO ? parseInt(process.env.SLOW_MO) : 0,
-      devtools: process.env.DEVTOOLS === 'true',
-      args: [
-        '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
-        '--disable-dev-shm-usage',
-        '--no-sandbox',
-        '--disable-setuid-sandbox'
-      ]
+      devtools: process.env.DEVTOOLS === 'true'
     }
   },
 
@@ -112,12 +105,36 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'Desktop Chrome',
-      use: { ...devices['Desktop Chrome'], viewport: { width: 1920, height: 1080 } },
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1920, height: 1080 },
+        launchOptions: {
+          args: [
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+            '--disable-dev-shm-usage',
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+          ]
+        }
+      },
       testIgnore: ['**/swan/**', '**/template.spec.js']
     },
     {
       name: 'Mobile Chrome',
-      use: { ...devices['iPhone SE'], viewport: { width: 375, height: 717 } },
+      use: {
+        ...devices['Galaxy S5'],
+        viewport: { width: 375, height: 717 },
+        launchOptions: {
+          args: [
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
+            '--disable-dev-shm-usage',
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+          ]
+        }
+      },
       testIgnore: ['**/template.spec.js']
     }
   ]
