@@ -128,7 +128,7 @@ spec:
                             script {
                                 echo "Running desktop visual regression tests..."
                                 def testCommand = getTestCommand(params.TEST_SUITE, false, params.UPDATE_BASELINES)
-                                catchError() {
+                                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                                     sh testCommand + " | tee desktop-visual.log"
                                 }
                             }
@@ -148,7 +148,7 @@ spec:
                             script {
                                 echo "Running mobile visual regression tests..."
                                 def testCommand = getTestCommand(params.TEST_SUITE, true, params.UPDATE_BASELINES)
-                                catchError() {
+                                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                                     sh testCommand + " | tee mobile-visual.log"
                                 }
                             }
