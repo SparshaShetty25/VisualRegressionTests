@@ -47,7 +47,7 @@ spec:
         PROTOCOL = "${params.PROTOCOL ?: 'https'}"
         HEADLESS = 'true'
         CI = 'true'
-        WORKERS = '2'  // Reduced for CI stability
+        WORKERS = '2'
         VISUAL_THRESHOLD = "${params.VISUAL_THRESHOLD ?: '0.1'}"
     }
 
@@ -65,7 +65,6 @@ spec:
                 'Toucan',
                 'Flamingo',
                 'Goose',
-                'Mobile-only'
             ],
             description: 'Test suite to run'
         )
