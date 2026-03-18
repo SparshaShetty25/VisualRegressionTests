@@ -172,13 +172,45 @@ spec:
     post {
         always {
             script {
+                // Dynamically organize snapshots into test-case folders
+                sh '''
+                    mkdir -p test-results
+
+                    # Find all snapshot files and organize them
+                    find tests -name "*-snapshots" -type d | while read snapshots_dir; do
+                        if [ "$(ls -A "$snapshots_dir" 2>/dev/null)" ]; then
+                            for file in "$snapshots_dir"/*.png; do
+                                if [ -f "$file" ]; then
+                                    filename=$(basename "$file")
+
+                                    # Extract app name from path (e.g., swan from tests/swan/...)
+                                    app_name=$(echo "$snapshots_dir" | sed 's|tests/||; s|/.*||')
+
+                                    # Extract test name (everything before -Mobile- or -Desktop-)
+                                    test_name=$(echo "$filename" | sed 's/-Mobile-.*//; s/-Desktop-.*//')
+
+                                    # Extract platform (Mobile or Desktop)
+                                    if echo "$filename" | grep -q "Mobile"; then
+                                        platform="baseline-mobile.png"
+                                    else
+                                        platform="baseline-desktop.png"
+                                    fi
+
+                                    # Create organized structure
+                                    target_dir="test-results/$app_name/$test_name"
+                                    mkdir -p "$target_dir"
+                                    cp "$file" "$target_dir/$platform"
+                                fi
+                            done
+                        fi
+                    done
+                '''
+
                 // Archive log files (matching TA pattern)
                 archiveArtifacts artifacts: '*.log', allowEmptyArchive: true
                 // Archive all test results for user access
                 archiveArtifacts artifacts: 'playwright-report/**/*', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
-                archiveArtifacts artifacts: 'tests/**/*-snapshots/**/*.png', allowEmptyArchive: true
-                archiveArtifacts artifacts: 'tests/swan/swan.spec.js-snapshots/*.png', allowEmptyArchive: true
                 archiveArtifacts artifacts: 'allure-results/**/*', allowEmptyArchive: true
 
                 // Publish HTML report for easy viewing
